@@ -2,7 +2,7 @@ from flask import Flask
 import os
 
 # папка для сохранения загруженных файлов
-UPLOAD_FOLDER = '/home/magomedali/Рабочий стол/my_diplom/app/static/files'
+UPLOAD_FOLDER = '/home/magomedali/Рабочий стол/prediction_of_aircraft_system_failures/app/static/files'
 
 # расширения файлов, которые разрешено загружать
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'xls'}
