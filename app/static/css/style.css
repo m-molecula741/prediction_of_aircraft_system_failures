@@ -1,0 +1,158 @@
+div.Val{
+    display: flex; flex-direction: column; align-items: center;
+}
+
+
+
+    .table-tbody {
+        height: 300px;
+        overflow-x: auto;
+        margin-top: 0px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+    .table table {
+        width:100%;
+        table-layout: fixed;
+        border: none;
+    }
+    .table thead th {
+        /* width: 300px; */
+        font-weight: bold;
+        text-align: left;
+        border: none;
+        padding: 10px 15px;
+        background: #d8d8d8;
+        font-size: 14px;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+    }
+    .table tbody td {
+        text-align: left;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        padding: 10px 15px;
+        font-size: 14px;
+        vertical-align: top;
+    }
+    .table tbody tr:nth-child(even){
+        background: #f3f3f3;
+    }
+     
+    /* Стили для скролла */
+    ::-webkit-scrollbar {
+        width: 6px;
+    } 
+    ::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    } 
+    ::-webkit-scrollbar-thumb {
+        box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    }
+
+    .scroll-table-body {
+        height: 300px;
+        overflow-x: auto;
+        margin-top: 0px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+    .scroll-table table {
+        table-layout: fixed;
+        border: none;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .scroll-table thead th {
+        font-weight: bold;
+        text-align: left;
+        border: none;
+        padding: 10px 15px;
+        background: #d8d8d8;
+        font-size: 14px;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+    }
+    .scroll-table tbody td {
+        text-align: left;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        padding: 10px 15px;
+        font-size: 14px;
+        vertical-align: top;
+    }
+    .scroll-table tbody tr:nth-child(even){
+        background: #f3f3f3;
+    }
+     
+    /* Стили для скролла */
+    ::-webkit-scrollbar {
+        width: 6px;
+    } 
+    ::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    } 
+    ::-webkit-scrollbar-thumb {
+        box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    }
+
+
+
+div.scroll-table {
+    width: 300px;
+    margin-left: 10%;
+    margin-top: 0.5%;
+}
+
+td{
+    width: 100px;
+}
+
+div.Com{
+    display: flex; flex-direction: column;  padding-top: 0%; margin-left: 10%;
+}
+
+
+.but{
+    margin-left: 15%;
+    outline: none; 
+    box-shadow: none; 
+
+}
+
+#upload-file-btn{
+    margin-top: 10px;
+}
+
+div.Bro{
+    float:right;
+    margin-right: 4%;
+    margin-top: -12.5%;
+}
+
+.center{
+    margin-left: 27%;
+    top: 1;
+    position: absolute;
+}
+
+.btn-secondary:focus,.btn-secondary:active, .btn-secondary:hover{
+    outline: none !important; 
+    box-shadow: none !important; 
+}
+
+.btn:focus,.btn:active,.btn:hover{
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+#result{
+    float:right;
+    margin-left: 85%;
+    position: absolute;
+    margin-top: -9.5%;
+}
+
+
+
+

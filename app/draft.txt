@@ -1,0 +1,669 @@
+@app.route('/met1', methods=['POST'])
+def post():
+    j = request.get_json()
+    print(j)
+    print(type(j))
+    j_list = j['j']
+    x_list = j['x']
+    print('x_list is ', x_list)
+
+    print(len(j_list))
+
+    
+
+    with open('/home/magomedali/Рабочий стол/my_diplom/app/info.json', 'r') as json_file:
+        data = json.load(json_file)
+        print('тип',type(data))
+        #print(data)
+
+        #здесь верно
+        data_inf = {}
+        for i in j_list:
+            print("i is", i)
+            clean_data = data['data_maga'][i+1]
+            data_inf[i] = clean_data
+        print(data_inf)
+
+    print()
+    print()
+    print()
+    print('data is',data)
+
+    datamin = data['data_maga'][0]
+    print('data_min is ', datamin)
+    datamax = data['data_maga'][1]
+    print('data_max is', datamax)
+
+    vremmin = []
+    for j in x_list:
+        for key, value in datamin.items():
+            if key == j:
+                vremmin.append(float(datamin[key]))
+                print(vremmin)
+    vectmin = np.array(vremmin)
+
+    print()
+    print('vectmin is',vectmin)
+
+    vremmax = []
+    for j in x_list:
+        for key, value in datamax.items():
+            if key == j:
+                vremmax.append(float(value))
+    vectmax = np.array(vremmax)
+
+    print('vectmax is',vectmax)
+    print()
+    #до сюды верно
+
+    vect_x = []
+    for i in j_list:
+        vrem_x = []
+        for j in x_list:
+            #print(data_inf[i])
+            vrem_x.append(float(data_inf[i][j]))
+            print('проверка data_inf[{}][{}] = {}'.format(i,j,data_inf[i][j]))
+        print()
+        vect = np.array(vrem_x)
+        vect_x.append(vect)
+    print('itog vect_x = ', vect_x)
+    print()
+
+    z_itog = []
+    for i in range(len(j_list)):
+        z_list = []
+        for j in range(len(x_list)):
+            z = (vect_x[i][j] - 1/2*(vectmax[j]+vectmin[j]))/((vectmax[j] - vectmin[j])*1/2)
+            #print('z[{}][{}] = {} '.format(i,j,z))
+            z_list.append(z)
+        print('z_list = ',z_list)
+        z_vect = np.array(z_list)
+        z_itog.append(z_vect)
+    print('-------------------------------------------')
+    print()
+    print('z itog is = ',z_itog)
+
+
+    F = []
+    for j in range(len(z_itog)):
+        sum = 0
+        for i in range(len(z_itog[j])):
+            sum+= z_itog[j][i]**2
+        f = math.sqrt(1/len(z_itog[j])*sum)
+        F.append(f)
+    print()
+    print()
+    print('F = ',F)
+
+    j_graph = [i+1 for i in range(len(j_list))]
+    plt.figure(1)
+    plt.title('график 1')
+    plt.xlabel('q полет')
+    plt.ylabel('Ф')
+    plt.plot(j_graph, F, marker='o')
+    plt.legend()
+    plt.savefig("my1.png")
+
+
+    F_sort = sorted(F)
+    print()
+    print('F sort is ', F_sort)
+    
+    P = []
+    print(len(F_sort))
+    for i in range(len(F_sort)):
+        P.append((i+1)/len(F_sort))
+        print('p[{}] = {}'.format(i , P[i]))
+    print('P = ',P)
+
+    plt.figure(2)
+    plt.title('Доверительная вероятность')
+    plt.xlabel('Ф')
+    plt.ylabel('Pi')
+    plt.plot(F_sort, P, marker='o')
+    plt.legend()
+    plt.savefig("graph.png")
+
+
+
+
+
+    
+
+    return flask.jsonify(message="201")
+
+
+    @app.route('/test', methods=['POST'])
+def test():
+    # получаем данные от клиента
+    j = request.get_json()
+    print(j)
+    print(type(j))
+    # j - номер полета
+    j_list = j['j']
+    j_list = [i for i in range(192)]
+    # x - интересующий параметр
+    x_list = j['x']
+    print('x_list is ', x_list)
+
+    print(len(j_list))
+
+    # вытаскиваем данные о полетах из бд
+    data = db.info.find()
+    print('data is',data)
+    data = json.loads(json_util.dumps(data))
+    data = dict(data[0])
+    #print(data)
+    print()
+
+    #-----------------------------------------------------------------------------
+    data_inf = {}
+    # выбираем  информацию  только о нужных полетах из j_list, который отправил нам клиент
+    for i in j_list:
+        print('печатаем номера полетов которые ввел клиент')
+        print("i is", i)
+        clean_data = data['data_maga'][i+1]
+        data_inf[i] = clean_data
+    print('нужные данные из бд',data_inf)
+
+
+
+    print()
+    print()
+    print()
+    #print('печатаем все данные из бд')
+    #print('data is',data)
+
+    # минимальные и максимальные значения для всех параметров
+    datamin = data['data_maga'][0]
+    print('data_min is ', datamin)
+    datamax = data['data_maga'][1]
+    print('data_max is', datamax)
+
+    vremmin = []
+    for j in x_list:
+        for key, value in datamin.items():
+            if key == j:
+                vremmin.append(float(datamin[key]))
+                print(vremmin)
+    vectmin = np.array(vremmin)
+
+    print()
+    # печатаем вектор минимальных значений параметров
+    print('vectmin is',vectmin)
+
+    vremmax = []
+    for j in x_list:
+        for key, value in datamax.items():
+            if key == j:
+                vremmax.append(float(value))
+    vectmax = np.array(vremmax)
+
+    # печатаем вектор максмальных значений параметров
+    print('vectmax is',vectmax)
+    print()
+
+
+    vect_x = []
+    for i in j_list:
+        vrem_x = []
+        for j in x_list:
+            #print(data_inf[i])
+            vrem_x.append(float(data_inf[i][j]))
+            print('проверка data_inf[{}][{}] = {}'.format(i,j,data_inf[i][j]))
+        print()
+        vect = np.array(vrem_x)
+        vect_x.append(vect)
+    # печатаем все нужные данные параметров полетов без минимальных и максимальных
+    print('itog vect_x = ', vect_x)
+    print()
+
+    # считаем  Zi
+    z_itog = []
+    for i in range(len(j_list)):
+        z_list = []
+        for j in range(len(x_list)):
+            z = (vect_x[i][j] - 1/2*(vectmax[j]+vectmin[j]))/((vectmax[j] - vectmin[j])*1/2)
+            #print('z[{}][{}] = {} '.format(i,j,z))
+            z_list.append(z)
+        print('z_list = ',z_list)
+        z_vect = np.array(z_list)
+        z_itog.append(z_vect)
+    print('-------------------------------------------')
+    print()
+    print('z itog is = ',z_itog)
+
+    # по известному выражению считаем выбранную функцию Ф
+    F = []
+    for j in range(len(z_itog)):
+        sum = 0
+        for i in range(len(z_itog[j])):
+            sum+= z_itog[j][i]**2
+        f = math.sqrt(1/len(z_itog[j])*sum)
+        F.append(f)
+    print()
+    print()
+    print('F = ',F)
+
+    # рисуем данную функцию Ф
+    j_graph = [i+1 for i in range(len(j_list))]
+    plt.figure(1)
+    plt.title('график 1')
+    plt.xlabel('q полет')
+    plt.ylabel('Ф')
+    plt.plot(j_graph, F, marker='o')
+    plt.legend()
+    plt.savefig("my1.png")
+
+    # сортируем функцию Ф по возрастанию
+    F_sort = sorted(F)
+    print()
+    print('F sort is ', F_sort)
+    
+    # считаем функцию F
+    P = []
+    print(len(F_sort))
+    for i in range(len(F_sort)):
+        P.append((i+1)/len(F_sort))
+        print('p[{}] = {}'.format(i , P[i]))
+    print('P = ',P)
+    print()
+
+    # рисуем функцию F
+    plt.figure(2)
+    plt.title('Доверительная вероятность')
+    plt.xlabel('Ф')
+    plt.ylabel('F')
+    plt.plot(F_sort, P, marker='o')
+    plt.legend()
+    plt.savefig("graph.png")
+
+    print()
+    # логарифмируем значение функции и отнимаем от 1
+    mu = []
+    for i in range(len(P)):
+        mu.append(-math.log((1.0000000001 - P[i])))
+    print('mu = ', mu)
+
+
+
+    """метод наименьших квадратов"""
+    # приравниваем частную производную dP/da = 0
+    # приравниваем частную производную dP/db = 0
+    # методом крамера, либо подстановкой вычисляем для функции нашего распределения формулы коэф-тов а и b
+    # вызываем функцию MNK которая посчитает коэф-ты
+    coef = MNK(F_sort,mu,len(mu))
+    print()
+    print()
+    print("a = {}, b = {}".format(coef[0],coef[1]))
+    print()
+    print()
+
+
+    #посчитаем значения для ф-ции Вейбла
+    xi_vable = F_sort[0] 
+    x_vable = []
+    y_vable = []
+
+    # считаем функцию по Вейбла по точкам
+    dx = 0.001
+    while xi_vable <= F_sort[len(F_sort)-1] + 0.00001:
+        x_vable.append(xi_vable)
+        y_vable.append(vable(xi_vable,coef[0],coef[1]))
+        xi_vable += dx
+        
+    
+    # рисуем графики функций 
+    plt.figure(3)
+    plt.title('сравнение функций')
+    plt.xlabel('xi')
+    plt.ylabel('yi')
+    plt.plot(F_sort, P, marker='o')
+    plt.plot(x_vable,y_vable)
+    plt.legend()
+    plt.savefig("comparison.png")
+
+
+
+
+
+
+    return flask.jsonify(message="201")
+
+
+
+
+
+class Models(db2.Document):
+    #Виды моделей воздушных судов
+    name = db2.StringField(max_length=20)
+    description = db2.StringField(max_length=300)
+
+class Boards(db2.Document):
+    #Конкретные воздушные судна
+    reg_num = db2.StringField(max_length=20)
+    model = db2.ReferenceField(Models)
+    description = db2.StringField(max_length=300)
+
+class Systems(db2.Document):
+    #информация о системах воздушного судна
+    name = db2.StringField(max_length=200)
+    parent_system = db2.ReferenceField(Models)
+
+class Flight_phases(db2.Document):
+    #Типовые полетные режимы
+    name = db2.StringField(max_length=20)
+    description = db2.StringField(max_length=300)
+
+class Parameters(db2.Document):
+    #Информация о параметрах
+    param_name =  db2.StringField(max_length=10)
+    full_param_name = db2.StringField(max_length=200)
+    system = parent_system = db2.ReferenceField(Systems)
+
+class Flights(db2.Document):
+    #Общая информация о полетах, выполненным конкртеным ВС
+    num_flight = db2.StringField(max_length=20)
+    board = db2.ReferenceField(Boards)
+
+class Flight_data(db2.Document):
+    #Значения параметров
+    board = db2.ReferenceField(Boards)
+    flight = db2.ReferenceField(Flights)
+    phase = db2.ReferenceField(Flight_phases)
+    param_values = db2.DictFields()
+
+
+
+@app.route('/teng', methods=['GET'])
+def teng():
+    n = Test.objects(name="Maga")
+    for i in n:
+        print(i.id)
+    return flask.jsonify(message="201")
+
+
+
+@app.route('/teng', methods=['GET'])
+def teng():
+    n = Parameters(param_name="x13", full_param_name = "Датчики обжатия стоек шасси", system = "6217a534e6d2347c14ea6631")
+    n.save()
+
+    return flask.jsonify(message="201")
+
+
+@app.route('/teng', methods=['GET'])
+def teng():
+    #n = parse('/home/magomedali/Рабочий стол/my_diplom/app/TestBoard_Engine.xls')
+    board = Boards.objects.first()
+    system = Systems.objects.get(parent_system = board)
+    print(system.name)
+    sys = Systems.objects().first().parent_system
+    print(sys.reg_num)
+    return flask.jsonify(message="201")
+
+
+@app.route('/a', methods=['GET'])
+def a():
+    b = Boards.objects()
+    lis = []
+    for i in b :
+        print(i.reg_num)
+        print(type(i.reg_num))
+        lis.append(i.reg_num)
+    boards = {
+        "airbus": lis
+        }
+    print(boards)
+    return flask.jsonify(boards)
+
+@app.route('/get/<todoid>/')
+def get(todoid):
+    todo = db.todos.find_one({'_id': ObjectId(todoid)})
+    print(todo)
+    #data = json.loads(json_util.dumps(todo))
+    return make_response(json_util.dumps(todo))
+
+
+@app.route('/flyinfo', methods=['GET'])
+def flyinfo():
+    boards = Boards.objects()
+    for b in boards:
+        print(b.reg_num)
+    print('boards is ', boards)
+    resp = make_response(render_template('flyinfo.html'))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    resp.headers['Content-Type'] = 'application/json charset=utf-8'
+    return resp
+
+
+@app.route('/active', methods=['POST'])
+def active():
+    val = request.data
+    data = val.decode('utf-8')
+    new_data = json.loads(data)
+    print(new_data)
+    print(type(new_data))
+    param_id = []
+    b = Boards.objects.get(reg_num=new_data['airbus'])
+    sys = Systems.objects.get(name=new_data['sys'])
+    fly = Flights.objects.get(num_flight=new_data['fly'])
+    params = Parameters.objects()
+    print(params)
+    for i in params:
+        for j in range(len(new_data['param'])):
+            if i.param_name == new_data['param'][j]:
+                param_id.append(i.id)
+    print(param_id)
+    print(param_id[0])
+    #достаем из базы минимальные и максимальные значения
+    if int(fly.num_flight) >= 2:
+        schet = 0
+        fly_extr_data = Flight_data.objects.filter(board=b)[:2]
+        #print(fly_extr_data)
+        for i in fly_extr_data:
+            #print(i.param_values)
+            if schet == 0:
+                vremmin = dict(i.param_values)
+            else:
+                vremmax = dict(i.param_values)
+            schet += 1
+    print('vremmin', vremmin)
+    print('vremmax',vremmax)
+
+    #сосчитали максимальные и минимальные допустимые значения параметров.
+    vremmax_list = []
+    for j in new_data['param']:
+        print('j',j)
+        for key, value in vremmax.items():
+            #print('key',key)
+            if key == j:
+                vremmax_list.append(float(value))
+                #print(vremmax_list)
+    vectmax = np.array(vremmax_list)
+    print('vectmax',vectmax)
+
+    vremmin_list = []
+    for j in new_data['param']:
+        print('j',j)
+        for key, value in vremmin.items():
+            #print('key',key)
+            if key == j:
+                vremmin_list.append(float(value))
+                #print(vremmin_list)
+    vectmin = np.array(vremmin_list)
+    print('vectmin',vectmin)
+
+    #далее нужно положить все остальные значения в списочек
+    print('max полет = ', fly.num_flight)
+
+    
+    vect_x = []
+    fly_data = Flight_data.objects.filter(board=b)[2:fly.num_flight + 2]
+    for i in fly_data:
+        print(i.flight.num_flight)
+        param_dict = dict(i.param_values)
+        #print(type(param_dict))
+        #print(param_dict['x1'])
+        vrem_x = []
+        for j in new_data['param']:
+            for key, value in param_dict.items():
+                if key == j:
+                    vrem_x.append(float(value))
+        vect_x.append(vrem_x)
+    print('vect_x = ', vect_x)
+
+
+
+    return flask.jsonify(message=200)
+
+
+function ParList(){
+ var xr = new XMLHttpRequest()
+ xr.open("GET","http://127.0.0.1:5000/c?sys="+document.getElementById("sys").value,false)
+  xr.send()
+  let resp= xr.response
+ obj = JSON.parse(resp);
+//  console.log(xr.responseText)
+ const obj1 = JSON.parse(resp);
+ let tr =`<thead>
+ <tr>
+ <th>Параметр</th>
+   <th>Выбрать</th>
+ </tr>
+</thead>
+<tbody>
+`
+ obj1.params.forEach(el => {
+     tr+='<tr>' 
+ + `<td>${el.set}</td>`
++ `<td><input type="checkbox" class="status" value="${el.set}"></td>`
+ + '</tr>';
+ })
+ tr+=`</tbody>`
+document.getElementById("table").innerHTML=tr;
+ document.getElementById("table").style.display='block';
+ document.getElementById("Res").style.display='block';
+
+
+   let btn = document.createElement('button')
+  var textInBtn = document.createTextNode('BUTTON');//создаем текст для кнопки
+  btn.appendChild(textInBtn);//добавляем текст в кнопку
+  btn.type = "button";
+  btn.id = "Res";
+  btn.onclick = GetResault();
+  btn.class = "btn btn-secondary";
+  document.body.appendChild(btn);
+
+          <script>
+            formElem.onsubmit = async (e) => {
+            e.preventDefault();
+            
+            let response = await fetch('http://127.0.0.1:5000/f', {
+            method: 'POST',
+            body: new FormData(formElem)
+            });
+            
+            let result = await response.json();
+            
+            alert(result.message);
+            };
+            </script>
+
+}
+
+
+ //  console.log(json);
+ var xr = new XMLHttpRequest()
+ xr.open("POST","http://127.0.0.1:5000/active",false)
+  xr.send(json)
+  if (xr.status != 200) {
+   // обработать ошибку
+   alert( xr.status + ': ' + xr.statusText ); // пример вывода: 404: Not Found
+ } else {
+   // вывести результат
+   let newVal = document.createElement('div')
+   
+   document.getElementById("spinner").style.display='none';
+ newVal.classList.add('Val')
+//  console.log(xr.responseText)
+ let Val2 = JSON.parse(xr.responseText)
+//  console.log(Val2)
+ newVal.textContent = Val2.text
+
+ const myImage = document.createElement('img')
+ myImage.src=Val2.image;
+ myImage.classList.add('Img')
+ 
+
+ 
+ document.body.appendChild(newVal)
+ newVal.after(myImage)
+ }}
+
+
+   // вывести результат
+   let pardiv = document.createElement('div')
+   
+   document.getElementById("spinner").style.display='none';
+
+   pardiv.className = 'Val'
+   let bro = document.getElementById("Bro")
+   console.log(bro)
+   bro.appendChild(pardiv)
+   const PD = document.querySelector('.Val')
+   
+   
+   //  console.log(xr.responseText)
+   let Val2 = JSON.parse(xr.responseText)
+   
+   
+   //  console.log(Val2)
+
+   // PD.appendChild(newVal)
+   
+   
+   const myImage = document.createElement('img')
+   myImage.src=Val2.image;
+   myImage.classList.add('Img')
+   pardiv.innerHTML = `<span class="sp">${Val2.text}</span>`
+   pardiv.appendChild(myImage)
+   //pardiv.innerHTML = `<div class="w-100"></div>`
+
+
+ console.log(myImage)
+  //pardiv.innerHTML(myImage)
+//pardiv.innerHTML=myImage
+
+
+ }}
+
+    // вывести результат
+   let pardiv = document.createElement('div')
+   
+   document.getElementById("spinner").style.display='none';
+   pardiv.className = 'Val'
+   document.body.append(pardiv)
+   const PD = document.querySelector('.Val')
+   
+   
+   //  console.log(xr.responseText)
+   let Val2 = JSON.parse(xr.responseText)
+   
+   
+   //  console.log(Val2)
+
+   // PD.appendChild(newVal)
+   
+   
+   const myImage = document.createElement('img')
+   myImage.src=Val2.image;
+   myImage.classList.add('Img')
+   pardiv.innerHTML = `<span class="sp">${Val2.text}</span>`
+ console.log(myImage)
+ pardiv.appendChild(myImage)
+  //pardiv.innerHTML(myImage)
+//pardiv.innerHTML=myImage
+
+
+ }}
