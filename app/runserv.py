@@ -838,7 +838,7 @@ def active():
     plt.ylabel('квантиль')
     plt.text(qi,-0.08,str(qi), color='red')
     plt.grid(True)
-    plt.savefig("/home/magomedali/Рабочий стол/forecast/app/static/images/" + str(filename))
+    plt.savefig("/home/magomedali/Рабочий стол/prediction_of_aircraft_system_failures/app/static/images/" + str(filename))
 
     context = {'text': 'отказ произойдет на {}-м полете'.format(qi), 'image':'http://localhost:5000/static/images/' + str(filename) + '.png'}
     
